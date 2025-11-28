@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopEasy - Online Shopping</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .hero {
+            height: 450px;
+            background: url('pages/bg_image.jpeg') no-repeat center center/cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        .hero-overlay {
+            background: rgba(0, 0, 0, 0.55);
+            padding: 40px 50px;
+            border-radius: 10px;
+            text-align: center;
+            color: white;
+        }
+        .product-card{
+            transition: .3s;
+        }
+        .product-card:hover{
+            transform: translateY(-6px);
+            box-shadow: 0 12px 26px rgba(0,0,0,0.25);
+        }
+        .product-card img{
+            height: 250px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="index.html">ShopEasy</a>
+        <ul class="navbar-nav ms-auto" id="navbarLinks"></ul>
+    </div>
+</nav>
+
+<div class="hero">
+    <div class="hero-overlay">
+        <h1 class="fw-bold">Welcome to ShopEasy</h1>
+        <p>Best Online Shopping Experience</p>
+        <a id="heroBtn" class="btn btn-light btn-lg mt-2" href="#">Start Shopping</a>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <h2 class="text-center fw-bold mb-4">Featured Products</h2>
+    <div class="row g-4" id="featuredProductsContainer"></div>
+</div>
+
+<footer class="bg-dark text-light text-center py-3 mt-4">
+    © 2025 ShopEasy. All Rights Reserved.
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    /* 🔐 Auto Admin Creation */
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+    if (!users.some(u => u.email === "admin@gmail.com")) {
+        users.push({
+            id: Date.now(),
+            name: "Admin",
+            email: "admin@gmail.com",
+            password: "admin123"
+        });
+        localStorage.setItem("users", JSON.stringify(users));
+    }
+
+    /* 🟢 Navbar Logic */
+    let logged = JSON.parse(localStorage.getItem("loggedInUser"));
+    let navbar = document.getElementById("navbarLinks");
+    let heroBtn = document.getElementById("heroBtn");
+
+    if(logged){
+        navbar.innerHTML = `
+            <li class='nav-item'><a class='nav-link'>Welcome, ${logged.name}</a></li>
+            <li class='nav-item'><a id='logoutBtn' class='nav-link'>Logout</a></li>`;
+        heroBtn.href = "pages/products.html";
+    } else {
+        navbar.innerHTML = `
+            <li class='nav-item'><a class='nav-link' href='pages/login.html'>Login</a></li>
+            <li class='nav-item'><a class='nav-link' href='pages/register.html'>Register</a></li>`;
+        heroBtn.href = "pages/login.html";
+    }
+
+    if(document.getElementById("logoutBtn")){
+        document.getElementById("logoutBtn").onclick = () => {
+            localStorage.removeItem("loggedInUser");
+            window.location.reload();
+        };
+    }
+
+    /* 🛍 Default Products Load (only if none) */
+    if(!localStorage.getItem("products")){
+        localStorage.setItem("products", JSON.stringify([
+            {id:1, name:"Smart Watch", description:"Fitness Smart Watch", price:1599, image:"pages/watch_image.jpeg"},
+            {id:2, name:"Headphones", description:"Noise Cancelling", price:1299, image:"pages/headphone.jpeg"},
+            {id:3, name:"Laptop", description:"Work & Gaming", price:45999, image:"pages/laptop.jpeg"},
+            {id:4, name:"Smartphone", description:"Amazing Performance", price:23999, image:"pages/phone.jpeg"},
+            {id:5, name:"Gaming Console", description:"Play Pro Gaming", price:29999, image:"pages/console.jpeg"},
+            {id:6, name:"Backpack", description:"Stylish Backpack", price:999, image:"pages/backpack.jpeg"}
+        ]));
+    }
+
+    /* Render Products */
+    let products = JSON.parse(localStorage.getItem("products"));
+    const container = document.getElementById("featuredProductsContainer");
+
+    products.slice(0,6).forEach(p => {
+        container.innerHTML += `
+        <div class="col-md-4">
+            <div class="card product-card shadow">
+                <img src="${p.image}" class="card-img-top">
+                <div class="card-body">
+                    <h5 class="fw-bold">${p.name}</h5>
+                    <p>${p.description}</p>
+                    <p class="fw-bold text-success">₹${p.price}</p>
+                    <a href="pages/products.html" class="btn btn-primary w-100">Buy Now</a>
+                </div>
+            </div>
+        </div>`;
+    });
+</script>
+
+</body>
+</html>
