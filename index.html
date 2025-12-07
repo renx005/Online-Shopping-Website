@@ -8,183 +8,296 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
+        :root{
+            --bg-main: #050712;
+            --bg-card: #111320;
+            --bg-card-soft: #161a2b;
+            --accent-1: #00ff95;
+            --accent-2: #00c8ff;
+            --text-main: #f5f7ff;
+            --text-muted: #9aa4c6;
+        }
+
         body {
-            background: #e9eef5;
-            font-family: 'Poppins', sans-serif;
+            background: radial-gradient(circle at top, #1a2440 0, #050712 45%);
+            color: var(--text-main);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
         }
 
-        /* Navbar */
+        /* NAVBAR */
         .navbar {
-            background: linear-gradient(90deg, #0a2647, #144272);
+            background: linear-gradient(90deg, #050712, #091020 40%, #050712);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
-        .navbar a.nav-link:hover {
-            color: #ffd60a !important;
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: #ffffff !important;
+        }
+        .navbar-brand span{
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .navbar .nav-link {
+            color: var(--text-muted) !important;
+            font-weight: 500;
+            margin-left: 10px;
+            transition: color .2s ease, transform .2s ease;
+        }
+        .navbar .nav-link:hover {
+            color: var(--accent-2) !important;
+            transform: translateY(-1px);
         }
 
-        /* Hero */
+        /* HERO */
         .hero {
             height: 480px;
-            background: url('pages/bg_image.jpeg') center/cover no-repeat fixed;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
+            overflow: hidden;
+        }
+        .hero::before{
+            content: "";
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(0,200,255,0.25), transparent 60%);
+            top: -120px;
+            right: -80px;
+            pointer-events: none;
+        }
+        .hero::after{
+            content: "";
+            position: absolute;
+            width: 420px;
+            height: 420px;
+            background: radial-gradient(circle, rgba(0,255,149,0.25), transparent 60%);
+            bottom: -120px;
+            left: -80px;
+            pointer-events: none;
         }
         .hero-overlay {
-            background: rgba(255,255,255,0.08);
-            backdrop-filter: blur(10px);
-            padding: 45px 50px;
-            border-radius: 16px;
-            text-align: center;
-            color: #ffffff;
-            border: 1px solid rgba(255,255,255,0.2);
-            animation: fadeUp 1s ease-in-out;
-        }
-        .btn-custom {
-            background: linear-gradient(90deg, #0d6efd, #6610f2);
-            color: white;
-            border: none;
-            transition: .3s;
-        }
-        .btn-custom:hover {
-            opacity: .85;
-            transform: scale(1.05);
-        }
-
-        /* Products */
-        .section-title {
-            font-weight: 700;
             position: relative;
+            z-index: 2;
+            background: rgba(8, 15, 40, 0.85);
+            border-radius: 18px;
+            padding: 40px 55px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            backdrop-filter: blur(12px);
+            animation: heroUp .9s ease-out;
+        }
+        .hero-overlay h1{
+            font-weight: 800;
+            font-size: 2.4rem;
+            margin-bottom: 10px;
+        }
+        .hero-overlay h1 span{
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .hero-overlay p{
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .btn-neon{
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+            border: none;
+            color: #020308;
+            font-weight: 600;
+            padding-inline: 32px;
+            box-shadow: 0 0 18px rgba(0,200,255,0.55);
+            transition: transform .2s ease, box-shadow .2s ease, opacity .2s ease;
+        }
+        .btn-neon:hover{
+            transform: translateY(-2px);
+            box-shadow: 0 0 26px rgba(0,200,255,0.8);
+            opacity: 0.95;
+        }
+
+        /* SECTION TITLE */
+        .section-title{
+            font-weight: 700;
+            font-size: 1.7rem;
             display: inline-block;
+            position: relative;
         }
-        .section-title::after {
+        .section-title::after{
             content: "";
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: -8px;
             width: 60%;
-            height: 4px;
-            background: #0d6efd;
-            display: block;
-            margin: 8px auto 0;
-            border-radius: 10px;
+            height: 3px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
         }
-        .product-card {
-            border-radius: 12px;
-            transition: .3s;
-            animation: fadeIn .8s ease-in-out;
+
+        /* PRODUCT CARDS */
+        .product-card{
+            background: linear-gradient(145deg, #0b0f1f, #050712);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.04);
+            overflow: hidden;
+            transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
         }
-        .product-card:hover {
+        .product-card:hover{
             transform: translateY(-6px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.18);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+            border-color: rgba(0,200,255,0.5);
         }
-        .product-card img {
-            border-top-left-radius: 12px;
-            border-top-right-radius: 12px;
-            height: 250px;
+        .product-card img{
+            height: 230px;
             object-fit: cover;
+            background: #050712;
+        }
+        .product-card .card-body{
+            padding: 18px 18px 20px;
+        }
+        .product-card h5{
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+        .product-card p{
+            margin-bottom: 6px;
+        }
+        .product-desc{
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        .product-price{
+            color: var(--accent-1);
+            font-weight: 700;
         }
 
-        /* Footer */
-        footer {
-            background: #0a2647;
+        /* FOOTER */
+        footer{
+            background: #03050c;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            color: var(--text-muted);
+            font-size: 0.9rem;
         }
 
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px);}
-            to { opacity: 1; transform: translateY(0);}
+        /* ANIMATIONS */
+        @keyframes heroUp{
+            from{ opacity: 0; transform: translateY(25px);}
+            to{ opacity: 1; transform: translateY(0);}
         }
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(30px);}
-            to { opacity: 1; transform: translateY(0);}
+        @keyframes fadeInCard{
+            from{ opacity: 0; transform: translateY(20px);}
+            to{ opacity: 1; transform: translateY(0);}
+        }
+        .fade-card{
+            animation: fadeInCard .6s ease forwards;
         }
     </style>
 </head>
 
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
+<nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="index.html">ShopEasy</a>
+        <a class="navbar-brand" href="index.html">
+            <span>Shop</span>Easy
+        </a>
         <ul class="navbar-nav ms-auto" id="navbarLinks"></ul>
     </div>
 </nav>
 
-<div class="hero">
+<section class="hero">
     <div class="hero-overlay">
-        <h1 class="fw-bold">Welcome to ShopEasy</h1>
-        <p class="mb-3">Your Favorite Online Shopping Destination 🎯</p>
-        <a id="heroBtn" class="btn btn-custom btn-lg">Start Shopping</a>
+        <h1><span>Welcome to</span> ShopEasy</h1>
+        <p>Experience next-gen online shopping with curated products and a smooth cart experience.</p>
+        <a id="heroBtn" class="btn btn-neon btn-lg">Start Shopping</a>
     </div>
-</div>
+</section>
 
-<div class="container mt-5">
-    <h2 class="text-center section-title">Featured Products</h2>
+<section class="container mt-5 mb-5">
+    <div class="text-center">
+        <h2 class="section-title">Featured Products</h2>
+    </div>
     <div class="row g-4 mt-4" id="featuredProductsContainer"></div>
-</div>
+</section>
 
-<footer class="text-light text-center py-3 mt-5">
-    © 2025 ShopEasy — All Rights Reserved.
+<footer class="text-center py-3">
+    © 2025 ShopEasy. All Rights Reserved.
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    /* Admin Auto-Setup */
+    /* 🔐 Auto Admin Creation */
     let users = JSON.parse(localStorage.getItem("users")) || [];
     if (!users.some(u => u.email === "admin@gmail.com")) {
-        users.push({id: Date.now(), name: "Admin", email: "admin@gmail.com", password: "admin123"});
+        users.push({
+            id: Date.now(),
+            name: "Admin",
+            email: "admin@gmail.com",
+            password: "admin123"
+        });
         localStorage.setItem("users", JSON.stringify(users));
     }
 
-    /* Navbar */
+    /* 🟢 Navbar Logic */
     let logged = JSON.parse(localStorage.getItem("loggedInUser"));
     let navbar = document.getElementById("navbarLinks");
     let heroBtn = document.getElementById("heroBtn");
 
-    if(logged){
+    if (logged) {
         navbar.innerHTML = `
-            <li class='nav-item'><a class='nav-link'>Welcome, ${logged.name}</a></li>
-            <li class='nav-item'><a class='nav-link' id='logoutBtn'>Logout</a></li>`;
+            <li class="nav-item"><a class="nav-link">Welcome, ${logged.name}</a></li>
+            <li class="nav-item"><a id="logoutBtn" class="nav-link" href="#">Logout</a></li>`;
         heroBtn.href = "pages/products.html";
     } else {
         navbar.innerHTML = `
-            <li class='nav-item'><a class='nav-link' href='pages/login.html'>Login</a></li>
-            <li class='nav-item'><a class='nav-link' href='pages/register.html'>Register</a></li>`;
+            <li class="nav-item"><a class="nav-link" href="pages/login.html">Login</a></li>
+            <li class="nav-item"><a class="nav-link" href="pages/register.html">Register</a></li>`;
         heroBtn.href = "pages/login.html";
     }
 
-    if(document.getElementById("logoutBtn")){
+    if (document.getElementById("logoutBtn")) {
         document.getElementById("logoutBtn").onclick = () => {
             localStorage.removeItem("loggedInUser");
             window.location.reload();
         };
     }
 
-    /* Load Default Products if Empty */
-    if(!localStorage.getItem("products")){
+    /* 🛍 Default Products Load (only if none) */
+    if (!localStorage.getItem("products")) {
         localStorage.setItem("products", JSON.stringify([
-            {id:1, name:"Smart Watch", description:"Fitness Smart Watch", price:1599, image:"watch_image.jpeg"},
-            {id:2, name:"Headphones", description:"Noise Cancelling", price:1299, image:"headphone.jpeg"},
-            {id:3, name:"Laptop", description:"Work & Gaming", price:45999, image:"laptop.jpeg"},
-            {id:4, name:"Smartphone", description:"Camera & Battery Focused", price:19999, image:"phone.jpeg"},
-            {id:5, name:"Gaming Console", description:"Next-gen performance", price:29999, image:"console.jpeg"},
-            {id:6, name:"Backpack", description:"Travel / Laptop Backpack", price:999, image:"backpack.jpeg"}
+            {id:1, name:"Smart Watch",      description:"Fitness Smart Watch",          price:1599,  image:"watch_image.jpeg"},
+            {id:2, name:"Headphones",      description:"Noise Cancelling",             price:1299,  image:"headphone.jpeg"},
+            {id:3, name:"Laptop",          description:"Work & Gaming",                price:45999, image:"laptop.jpeg"},
+            {id:4, name:"Smartphone",      description:"Camera & Battery Focused",     price:19999, image:"phone.jpeg"},
+            {id:5, name:"Gaming Console",  description:"Next-gen performance",         price:29999, image:"console.jpeg"},
+            {id:6, name:"Backpack",        description:"Travel / Laptop Backpack",     price:999,   image:"backpack.jpeg"}
         ]));
     }
 
-    /* Render Featured Products */
+    /* Render Products */
     let products = JSON.parse(localStorage.getItem("products"));
     const container = document.getElementById("featuredProductsContainer");
 
-    products.slice(0,6).forEach(p => {
+    products.slice(0, 6).forEach((p, i) => {
         container.innerHTML += `
         <div class="col-md-4">
-            <div class="card product-card shadow-sm">
-                <img src="pages/${p.image}" alt="${p.name}">
+            <div class="card product-card shadow-sm fade-card" style="animation-delay:${i * 0.08}s">
+                <img src="pages/${p.image}" class="card-img-top" alt="${p.name}">
                 <div class="card-body">
                     <h5 class="fw-bold">${p.name}</h5>
-                    <p class="text-muted">${p.description}</p>
-                    <p class="fw-bold text-success">₹${p.price}</p>
-                    <a href="pages/products.html" class="btn btn-custom w-100">Buy Now</a>
+                    <p class="product-desc">${p.description}</p>
+                    <p class="product-price">₹${p.price}</p>
+                    <a href="pages/products.html" class="btn btn-neon w-100 mt-2">Buy Now</a>
                 </div>
             </div>
         </div>`;
@@ -193,4 +306,5 @@
 
 </body>
 </html>
+
 
