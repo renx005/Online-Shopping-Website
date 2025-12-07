@@ -3,181 +3,209 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cart - ShopEasy</title>
+    <title>Your Cart - ShopEasy</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
     <style>
         body {
+            background: #0f111a;
+            color: #e6e6e6;
             font-family: 'Segoe UI', sans-serif;
-            background: radial-gradient(circle, #101524, #05070f);
-            color: white;
         }
-
-        h2 {
+        .navbar {
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(6px);
+        }
+        .title {
             color: #00eaff;
-            font-weight: bold;
+            font-weight: 700;
         }
-
-        .cart-box {
-            background: rgba(25, 25, 45, 0.92);
+        .cart-card {
+            background: rgba(255,255,255,0.05);
             border-radius: 12px;
-            padding: 20px;
+            padding: 18px;
             margin-bottom: 18px;
-            box-shadow: 0 0 18px rgba(0, 238, 255, 0.25);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 0 10px rgba(0,255,255,0.08);
         }
-
         .item-img {
+            height: 90px;
             width: 110px;
-            height: 110px;
-            border-radius: 10px;
             object-fit: cover;
-            border: 2px solid #00eaff;
+            border-radius: 8px;
         }
-
         .qty-btn {
-            background: #00eaff;
-            color: black;
-            font-size: 18px;
+            width: 32px;
+            height: 32px;
             border: none;
-            width: 35px;
-            height: 35px;
             font-weight: bold;
             border-radius: 6px;
+            background: #13172a;
+            color: #fff;
         }
-
         .qty-btn:hover {
-            background: #4e00c9;
-            color: white;
+            background: #00eaff;
+            color: #000;
         }
-
+        .remove-btn {
+            background: #ff3d5a;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
+        .remove-btn:hover {
+            opacity: 0.8;
+        }
         .checkout-btn {
             background: linear-gradient(90deg, #6a00ff, #00eaff);
             border: none;
+            padding: 12px 20px;
             font-weight: bold;
-            padding: 12px 25px;
             border-radius: 10px;
+            color: #fff;
         }
         .checkout-btn:hover {
-            opacity:.85;
+            opacity: 0.9;
         }
-
-        .remove-text {
-            color: #ff4d4d;
-            cursor: pointer;
+        .empty-cart-msg {
+            margin-top: 70px;
+            text-align: center;
+        }
+        .empty-cart-msg p {
+            margin-top: 14px;
+            font-size: 18px;
+            color: #00eaff;
+        }
+        .empty-btn {
+            margin-top: 12px;
+            background: linear-gradient(90deg, #00eaff, #6a00ff);
+            padding: 10px 18px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            text-decoration: none;
         }
     </style>
 </head>
 <body>
 
-<!-- Navbar -->
-<nav class="navbar navbar-dark bg-dark px-3">
-    <a class="navbar-brand fw-bold" href="../index.html">ShopEasy</a>
-    <a href="#" id="logoutBtn" class="text-light">Logout</a>
+<!-- NAVBAR -->
+<nav class="navbar navbar-dark">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="../index.html" style="color:#00eaff;">ShopEasy</a>
+        <ul class="navbar-nav ms-auto d-flex flex-row gap-3" id="navbarLinks"></ul>
+    </div>
 </nav>
 
+<!-- PAGE CONTENT -->
 <div class="container mt-4">
-    <h2 class="text-center">🛒 Your Cart</h2>
 
-    <div id="cartItems" class="mt-4"></div>
+    <h2 class="text-center title mb-4"><i class="bi bi-cart3 me-2"></i>Your Cart</h2>
+
+    <div id="cartItems"></div>
 
     <div class="text-end mt-4">
         <h4>Total: ₹ <span id="totalPrice">0</span></h4>
-        <!-- 🔹 Added id here -->
-        <button id="checkoutBtn" class="checkout-btn mt-2">Proceed to Checkout</button>
+        <button class="checkout-btn mt-2" id="checkoutBtn">Proceed to Checkout</button>
     </div>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-// User must be logged in
-let user = JSON.parse(localStorage.getItem("loggedInUser"));
-if(!user){
-    alert("Please Login First");
-    window.location.href = "login.html";
-}
-
-// Logout
-document.getElementById("logoutBtn").onclick = () => {
-    localStorage.removeItem("loggedInUser");
-    window.location.href = "login.html";
-};
-
-let cart = JSON.parse(localStorage.getItem("cart")) || [];
-const cartContainer = document.getElementById("cartItems");
-const totalEl = document.getElementById("totalPrice");
-
-function updateCart(){
-    let total = 0;
-    cartContainer.innerHTML = "";
-
-    if(cart.length === 0){
-        cartContainer.innerHTML = `<p class="text-center text-muted">Your cart is empty.</p>`;
-        totalEl.innerText = "0";
-        return;
+    let loggedUser = JSON.parse(localStorage.getItem("loggedInUser"));
+    if (!loggedUser) {
+        alert("Please login first!");
+        window.location.href = "login.html";
     }
 
-    cart.forEach((item, index) => {
-        total += item.price * item.qty;
+    let navbar = document.getElementById("navbarLinks");
+    navbar.innerHTML = `
+        <li class="nav-item"><a class="nav-link text-light">Welcome, ${loggedUser.name}</a></li>
+        <li class="nav-item"><a id="logoutBtn" class="nav-link text-light" href="#">Logout</a></li>
+    `;
 
-        cartContainer.innerHTML += `
-            <div class="cart-box row align-items-center">
-                <div class="col-3 text-center">
+    document.getElementById("logoutBtn").onclick = () => {
+        localStorage.removeItem("loggedInUser");
+        window.location.href = "../index.html";
+    };
+
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const cartContainer = document.getElementById("cartItems");
+    const totalPriceElement = document.getElementById("totalPrice");
+
+    function renderCart() {
+        cartContainer.innerHTML = "";
+
+        if (cart.length === 0) {
+            totalPriceElement.innerText = "0";
+            cartContainer.innerHTML = `
+                <div class="empty-cart-msg">
+                    <i class="bi bi-cart-x fs-1"></i>
+                    <p>Your cart is empty.</p>
+                    <a href="products.html" class="empty-btn">Start Shopping</a>
+                </div>`;
+            return;
+        }
+
+        let total = 0;
+
+        cart.forEach((item, i) => {
+            total += item.price * item.qty;
+            cartContainer.innerHTML += `
+                <div class="cart-card">
                     <img src="${item.image}" class="item-img">
+                    <div>
+                        <h6>${item.name}</h6>
+                        <p>₹${item.price} x ${item.qty}</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="qty-btn" onclick="updateQty(${i}, 1)">+</button>
+                        <button class="qty-btn" onclick="updateQty(${i}, -1)">-</button>
+                    </div>
+                    <button class="remove-btn" onclick="removeItem(${i})">Remove</button>
                 </div>
+            `;
+        });
 
-                <div class="col-5">
-                    <h5>${item.name}</h5>
-                    <p class="text-info fw-bold">₹${item.price}</p>
-                    <span class="remove-text" onclick="removeItem(${index})">Remove</span>
-                </div>
-
-                <div class="col-4 text-center">
-                    <button class="qty-btn" onclick="changeQty(${index}, -1)">-</button>
-                    <span class="mx-2 fw-bold">${item.qty}</span>
-                    <button class="qty-btn" onclick="changeQty(${index}, 1)">+</button>
-                </div>
-            </div>
-        `;
-    });
-
-    totalEl.innerText = total;
-    localStorage.setItem("cart", JSON.stringify(cart));
-}
-
-function changeQty(i, change){
-    cart[i].qty += change;
-
-    if(cart[i].qty <= 0){
-        cart.splice(i,1);
-    }
-    updateCart();
-}
-
-function removeItem(i){
-    cart.splice(i,1);
-    updateCart();
-}
-
-// 🔹 Checkout button handler
-document.getElementById("checkoutBtn").addEventListener("click", function () {
-    if(cart.length === 0){
-        alert("Your cart is empty!");
-        return;
+        totalPriceElement.innerText = total;
     }
 
-    alert("Checkout successful! (Demo)");
-    cart = [];
-    localStorage.removeItem("cart");
-    updateCart();
-});
+    function updateQty(index, change) {
+        if (cart[index].qty + change <= 0) return;
+        cart[index].qty += change;
+        localStorage.setItem("cart", JSON.stringify(cart));
+        renderCart();
+    }
 
-updateCart();
+    function removeItem(index) {
+        cart.splice(index, 1);
+        localStorage.setItem("cart", JSON.stringify(cart));
+        renderCart();
+    }
+
+    document.getElementById("checkoutBtn").onclick = () => {
+        if(cart.length === 0){
+            alert("Your cart is empty!");
+        } else {
+            alert("Checkout Successful! 🛍️");
+            localStorage.removeItem("cart");
+            renderCart();
+        }
+    };
+
+    renderCart();
 </script>
 
 </body>
 </html>
+
 
 
 
