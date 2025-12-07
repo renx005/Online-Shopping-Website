@@ -9,41 +9,99 @@
 
     <style>
         body {
-            background-color: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #e9eef5;
+            font-family: 'Poppins', sans-serif;
         }
+
+        /* Navbar */
+        .navbar {
+            background: linear-gradient(90deg, #0a2647, #144272);
+        }
+        .navbar a.nav-link:hover {
+            color: #ffd60a !important;
+        }
+
+        /* Hero */
         .hero {
-            height: 450px;
-            background: url('pages/bg_image.jpeg') no-repeat center center/cover;
+            height: 480px;
+            background: url('pages/bg_image.jpeg') center/cover no-repeat fixed;
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             position: relative;
         }
         .hero-overlay {
-            background: rgba(0, 0, 0, 0.55);
-            padding: 40px 50px;
-            border-radius: 10px;
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(10px);
+            padding: 45px 50px;
+            border-radius: 16px;
             text-align: center;
-            color: white;
+            color: #ffffff;
+            border: 1px solid rgba(255,255,255,0.2);
+            animation: fadeUp 1s ease-in-out;
         }
-        .product-card{
+        .btn-custom {
+            background: linear-gradient(90deg, #0d6efd, #6610f2);
+            color: white;
+            border: none;
             transition: .3s;
         }
-        .product-card:hover{
-            transform: translateY(-6px);
-            box-shadow: 0 12px 26px rgba(0,0,0,0.25);
+        .btn-custom:hover {
+            opacity: .85;
+            transform: scale(1.05);
         }
-        .product-card img{
+
+        /* Products */
+        .section-title {
+            font-weight: 700;
+            position: relative;
+            display: inline-block;
+        }
+        .section-title::after {
+            content: "";
+            width: 60%;
+            height: 4px;
+            background: #0d6efd;
+            display: block;
+            margin: 8px auto 0;
+            border-radius: 10px;
+        }
+        .product-card {
+            border-radius: 12px;
+            transition: .3s;
+            animation: fadeIn .8s ease-in-out;
+        }
+        .product-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.18);
+        }
+        .product-card img {
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
             height: 250px;
             object-fit: cover;
+        }
+
+        /* Footer */
+        footer {
+            background: #0a2647;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px);}
+            to { opacity: 1; transform: translateY(0);}
         }
     </style>
 </head>
 
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
     <div class="container">
         <a class="navbar-brand fw-bold" href="index.html">ShopEasy</a>
         <ul class="navbar-nav ms-auto" id="navbarLinks"></ul>
@@ -53,36 +111,31 @@
 <div class="hero">
     <div class="hero-overlay">
         <h1 class="fw-bold">Welcome to ShopEasy</h1>
-        <p>Best Online Shopping Experience</p>
-        <a id="heroBtn" class="btn btn-light btn-lg mt-2" href="#">Start Shopping</a>
+        <p class="mb-3">Your Favorite Online Shopping Destination 🎯</p>
+        <a id="heroBtn" class="btn btn-custom btn-lg">Start Shopping</a>
     </div>
 </div>
 
 <div class="container mt-5">
-    <h2 class="text-center fw-bold mb-4">Featured Products</h2>
-    <div class="row g-4" id="featuredProductsContainer"></div>
+    <h2 class="text-center section-title">Featured Products</h2>
+    <div class="row g-4 mt-4" id="featuredProductsContainer"></div>
 </div>
 
-<footer class="bg-dark text-light text-center py-3 mt-4">
-    © 2025 ShopEasy. All Rights Reserved.
+<footer class="text-light text-center py-3 mt-5">
+    © 2025 ShopEasy — All Rights Reserved.
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    /* 🔐 Auto Admin Creation */
+    /* Admin Auto-Setup */
     let users = JSON.parse(localStorage.getItem("users")) || [];
     if (!users.some(u => u.email === "admin@gmail.com")) {
-        users.push({
-            id: Date.now(),
-            name: "Admin",
-            email: "admin@gmail.com",
-            password: "admin123"
-        });
+        users.push({id: Date.now(), name: "Admin", email: "admin@gmail.com", password: "admin123"});
         localStorage.setItem("users", JSON.stringify(users));
     }
 
-    /* 🟢 Navbar Logic */
+    /* Navbar */
     let logged = JSON.parse(localStorage.getItem("loggedInUser"));
     let navbar = document.getElementById("navbarLinks");
     let heroBtn = document.getElementById("heroBtn");
@@ -90,7 +143,7 @@
     if(logged){
         navbar.innerHTML = `
             <li class='nav-item'><a class='nav-link'>Welcome, ${logged.name}</a></li>
-            <li class='nav-item'><a id='logoutBtn' class='nav-link'>Logout</a></li>`;
+            <li class='nav-item'><a class='nav-link' id='logoutBtn'>Logout</a></li>`;
         heroBtn.href = "pages/products.html";
     } else {
         navbar.innerHTML = `
@@ -106,34 +159,32 @@
         };
     }
 
-    /* 🛍 Default Products Load (only if none) */
+    /* Load Default Products if Empty */
     if(!localStorage.getItem("products")){
         localStorage.setItem("products", JSON.stringify([
-    {id:1, name:"Smart Watch",  description:"Fitness Smart Watch",          price:1599,  image:"watch_image.jpeg"},
-    {id:2, name:"Headphones",   description:"Noise Cancelling",             price:1299,  image:"headphone.jpeg"},
-    {id:3, name:"Laptop",       description:"Work & Gaming",                price:45999, image:"laptop.jpeg"},
-    {id:4, name:"Smartphone",   description:"Camera & Battery Focused",     price:19999, image:"phone.jpeg"},
-    {id:5, name:"Gaming Console", description:"Next-gen performance",       price:29999, image:"console.jpeg"},
-    {id:6, name:"Backpack",     description:"Travel / Laptop Backpack",     price:999,   image:"backpack.jpeg"}
-]));
-
+            {id:1, name:"Smart Watch", description:"Fitness Smart Watch", price:1599, image:"watch_image.jpeg"},
+            {id:2, name:"Headphones", description:"Noise Cancelling", price:1299, image:"headphone.jpeg"},
+            {id:3, name:"Laptop", description:"Work & Gaming", price:45999, image:"laptop.jpeg"},
+            {id:4, name:"Smartphone", description:"Camera & Battery Focused", price:19999, image:"phone.jpeg"},
+            {id:5, name:"Gaming Console", description:"Next-gen performance", price:29999, image:"console.jpeg"},
+            {id:6, name:"Backpack", description:"Travel / Laptop Backpack", price:999, image:"backpack.jpeg"}
+        ]));
     }
 
-    /* Render Products */
+    /* Render Featured Products */
     let products = JSON.parse(localStorage.getItem("products"));
     const container = document.getElementById("featuredProductsContainer");
 
     products.slice(0,6).forEach(p => {
         container.innerHTML += `
         <div class="col-md-4">
-            <div class="card product-card shadow">
-                <img src="pages/${p.image}" class="card-img-top" alt="${p.name}">
-
+            <div class="card product-card shadow-sm">
+                <img src="pages/${p.image}" alt="${p.name}">
                 <div class="card-body">
                     <h5 class="fw-bold">${p.name}</h5>
-                    <p>${p.description}</p>
+                    <p class="text-muted">${p.description}</p>
                     <p class="fw-bold text-success">₹${p.price}</p>
-                    <a href="pages/products.html" class="btn btn-primary w-100">Buy Now</a>
+                    <a href="pages/products.html" class="btn btn-custom w-100">Buy Now</a>
                 </div>
             </div>
         </div>`;
@@ -142,3 +193,4 @@
 
 </body>
 </html>
+
