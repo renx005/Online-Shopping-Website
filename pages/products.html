@@ -3,122 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Products - ShopEasy</title>
+    <title>Our Products - ShopEasy</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-        body { background-color: #eef1f4; }
-        .product-card { transition: transform .3s, box-shadow .3s; }
+        body {
+            background: linear-gradient(to bottom right, #090b1a, #020312);
+            font-family: 'Segoe UI', sans-serif;
+            color: #e8e8e8;
+        }
+        .navbar {
+            background: #05060f !important;
+        }
+        .navbar-brand {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .highlight {
+            color: #00f2ff;
+        }
+
+        /* Product Cards */
+        .product-card {
+            background: #0c1022;
+            border-radius: 15px;
+            padding: 12px;
+            transition: .3s;
+            border: 1px solid #1a1f35;
+        }
         .product-card:hover {
             transform: translateY(-6px);
-            box-shadow: 0px 12px 26px rgba(0,0,0,0.25);
+            box-shadow: 0 10px 25px rgba(0,255,255,0.15);
         }
         .product-card img {
-            height: 250px;
+            height: 220px;
             object-fit: cover;
+            border-radius: 10px;
         }
-        .admin-btns button { margin-right: 5px; }
+
+        /* Gradient Button */
+        .btn-gradient {
+            background: linear-gradient(90deg, #007bff, #a100ff);
+            border: none;
+            color: white;
+            font-weight: 600;
+            transition: .3s;
+            border-radius: 8px;
+        }
+        .btn-gradient:hover {
+            opacity: 0.9;
+            transform: scale(1.03);
+        }
+
+        /* Admin Buttons */
+        .admin-btns button {
+            font-size: 12px;
+            padding: 4px 8px;
+        }
+
+        h2 {
+            color: #00eaff;
+        }
     </style>
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="../index.html">ShopEasy</a>
+        <a class="navbar-brand" href="../index.html">Shop<span class="highlight">Easy</span></a>
         <ul class="navbar-nav ms-auto" id="navbarLinks"></ul>
     </div>
 </nav>
 
-<div class="container mt-4">
-    <h2 class="fw-bold text-center">Our Products</h2>
-    <div id="productList" class="row g-4 mt-3"></div>
+<!-- Page Title -->
+<div class="container mt-5">
+    <h2 class="text-center mb-4 fw-bold">Explore Products</h2>
+    <div class="row g-4" id="productList"></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    const loggedUser = JSON.parse(localStorage.getItem("loggedInUser"));
+    let loggedUser = JSON.parse(localStorage.getItem("loggedInUser"));
+    let navbar = document.getElementById("navbarLinks");
 
-    if (!loggedUser) {
-        alert("Please login first!");
-        window.location.href = "login.html";
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    let cartCount = cart.reduce((sum, item) => sum + item.qty, 0);
+
+    if(loggedUser){
+        if(loggedUser.email === "admin@gmail.com"){
+            navbar.innerHTML = `
+                <li class='nav-item'><a class='nav-link'>Admin Panel</a></li>
+                <li class='nav-item'><a class='nav-link' href='add_product.html'>Add Product</a></li>
+                <li class='nav-item'><a class='nav-link' href='#' id='logoutBtn'>Logout</a></li>
+            `;
+        } else {
+            navbar.innerHTML = `
+                <li class='nav-item'><a class='nav-link'>Welcome, ${loggedUser.name}</a></li>
+                <li class='nav-item'><a class='nav-link' href='cart.html'>Cart <span class="badge bg-info text-dark">${cartCount}</span></a></li>
+                <li class='nav-item'><a class='nav-link' href='#' id='logoutBtn'>Logout</a></li>
+            `;
+        }
+
+        document.getElementById("logoutBtn").onclick = () => {
+            localStorage.removeItem("loggedInUser");
+            window.location.href = "login.html";
+        };
+
+    } else {
+        navbar.innerHTML = `
+            <li class='nav-item'><a class='nav-link' href='login.html'>Login</a></li>
+            <li class='nav-item'><a class='nav-link' href='register.html'>Register</a></li>
+        `;
     }
 
-    const navbarLinks = document.getElementById("navbarLinks");
-    let cartCount = (JSON.parse(localStorage.getItem("cart")) || [])
-                        .reduce((sum, item) => sum + item.qty, 0);
-
-    navbarLinks.innerHTML = `
-        <li class="nav-item"><a class="nav-link">Welcome, ${loggedUser.name}</a></li>
-        <li class="nav-item">
-            <a class="nav-link" href="cart.html">Cart <span class="badge bg-warning text-dark">${cartCount}</span></a>
-        </li>
-        <li class="nav-item"><a id="logoutBtn" class="nav-link">Logout</a></li>
-    `;
-
-    document.getElementById("logoutBtn").onclick = () => {
-        localStorage.removeItem("loggedInUser");
-        window.location.href = "login.html";
-    };
-
-    let products = JSON.parse(localStorage.getItem("products")) || [];
-    let isAdmin = loggedUser.email === "admin@gmail.com";
+    let products = JSON.parse(localStorage.getItem("products"));
     const productList = document.getElementById("productList");
+    let isAdmin = loggedUser?.email === "admin@gmail.com";
 
-    function renderProducts() {
+    function renderProducts(){
         productList.innerHTML = "";
         products.forEach((p, index) => {
             productList.innerHTML += `
-                <div class="col-md-4">
-                    <div class="card product-card shadow">
-                        <img src="${p.image}" class="card-img-top" alt="${p.name}">
-                        <div class="card-body">
-                            <h5 class="card-title fw-bold">${p.name}</h5>
-                            <p class="card-text">${p.description}</p>
-                            <p class="fw-bold">₹${p.price}</p>
+            <div class="col-md-4">
+                <div class="product-card shadow-sm">
+                    <img src="${p.image}" class="w-100" alt="${p.name}">
+                    <div class="p-3">
+                        <h5 class="fw-bold">${p.name}</h5>
+                        <p>${p.description}</p>
+                        <p class="fw-bold text-info">₹${p.price}</p>
 
-                            <button class="btn btn-success w-100 mb-2" onclick="addToCart(${p.id})">
-                                Add to Cart
-                            </button>
+                        <button class="btn-gradient w-100 mb-2" onclick="addToCart(${p.id})">Add to Cart</button>
 
-                            ${isAdmin ? `
-                                <div class="d-flex admin-btns">
-                                    <button class="btn btn-warning btn-sm" onclick="editProduct(${index})">Edit</button>
-                                    <button class="btn btn-danger btn-sm" onclick="deleteProduct(${index})">Delete</button>
-                                </div>
-                            ` : ""}
-                        </div>
+                        ${isAdmin ? `
+                        <div class="d-flex justify-content-between admin-btns">
+                            <button class="btn btn-warning btn-sm" onclick="editProduct(${index})">Edit</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteProduct(${index})">Delete</button>
+                        </div>` : ""}
                     </div>
                 </div>
-            `;
+            </div>`;
         });
     }
-
     renderProducts();
 
-    function addToCart(id) {
+    function addToCart(id){
         let cart = JSON.parse(localStorage.getItem("cart")) || [];
-        let item = cart.find(i => i.id === id);
+        let existing = cart.find(x => x.id === id);
 
-        if (item) item.qty++;
+        if(existing){ existing.qty++; }
         else {
-            let product = products.find(i => i.id === id);
-            cart.push({...product, qty: 1});
+            let product = products.find(x => x.id === id);
+            cart.push({...product, qty:1});
         }
 
         localStorage.setItem("cart", JSON.stringify(cart));
-        alert("Added to cart!");
+        alert("Added to Cart!");
     }
 
-    function deleteProduct(index) {
-        if (!confirm("Delete this product?")) return;
-        products.splice(index, 1);
-        localStorage.setItem("products", JSON.stringify(products));
-        renderProducts();
+    function deleteProduct(index){
+        if(confirm("Delete product?")){
+            products.splice(index,1);
+            localStorage.setItem("products", JSON.stringify(products));
+            renderProducts();
+        }
     }
 
-    function editProduct(index) {
+    function editProduct(index){
         localStorage.setItem("editIndex", index);
         window.location.href = "edit_product.html";
     }
@@ -126,3 +179,4 @@
 
 </body>
 </html>
+
