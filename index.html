@@ -109,13 +109,14 @@
     /* 🛍 Default Products Load (only if none) */
     if(!localStorage.getItem("products")){
         localStorage.setItem("products", JSON.stringify([
-            {id:1, name:"Smart Watch", description:"Fitness Smart Watch", price:1599, image:"pages/watch_image.jpeg"},
-            {id:2, name:"Headphones", description:"Noise Cancelling", price:1299, image:"pages/headphone.jpeg"},
-            {id:3, name:"Laptop", description:"Work & Gaming", price:45999, image:"pages/laptop.jpeg"},
-            {id:4, name:"Smartphone", description:"Amazing Performance", price:23999, image:"pages/phone.jpeg"},
-            {id:5, name:"Gaming Console", description:"Play Pro Gaming", price:29999, image:"pages/console.jpeg"},
-            {id:6, name:"Backpack", description:"Stylish Backpack", price:999, image:"pages/backpack.jpeg"}
-        ]));
+    {id:1, name:"Smart Watch",  description:"Fitness Smart Watch",          price:1599,  image:"watch_image.jpeg"},
+    {id:2, name:"Headphones",   description:"Noise Cancelling",             price:1299,  image:"headphone.jpeg"},
+    {id:3, name:"Laptop",       description:"Work & Gaming",                price:45999, image:"laptop.jpeg"},
+    {id:4, name:"Smartphone",   description:"Camera & Battery Focused",     price:19999, image:"phone.jpeg"},
+    {id:5, name:"Gaming Console", description:"Next-gen performance",       price:29999, image:"console.jpeg"},
+    {id:6, name:"Backpack",     description:"Travel / Laptop Backpack",     price:999,   image:"backpack.jpeg"}
+]));
+
     }
 
     /* Render Products */
