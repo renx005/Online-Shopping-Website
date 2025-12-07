@@ -127,7 +127,8 @@
         container.innerHTML += `
         <div class="col-md-4">
             <div class="card product-card shadow">
-                <img src="${p.image}" class="card-img-top">
+                <img src="pages/${p.image}" class="card-img-top" alt="${p.name}">
+
                 <div class="card-body">
                     <h5 class="fw-bold">${p.name}</h5>
                     <p>${p.description}</p>
