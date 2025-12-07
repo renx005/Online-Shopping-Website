@@ -83,7 +83,8 @@
 
     <div class="text-end mt-4">
         <h4>Total: ₹ <span id="totalPrice">0</span></h4>
-        <button class="checkout-btn mt-2">Proceed to Checkout</button>
+        <!-- 🔹 Added id here -->
+        <button id="checkoutBtn" class="checkout-btn mt-2">Proceed to Checkout</button>
     </div>
 </div>
 
@@ -110,6 +111,12 @@ const totalEl = document.getElementById("totalPrice");
 function updateCart(){
     let total = 0;
     cartContainer.innerHTML = "";
+
+    if(cart.length === 0){
+        cartContainer.innerHTML = `<p class="text-center text-muted">Your cart is empty.</p>`;
+        totalEl.innerText = "0";
+        return;
+    }
 
     cart.forEach((item, index) => {
         total += item.price * item.qty;
@@ -153,10 +160,24 @@ function removeItem(i){
     updateCart();
 }
 
+// 🔹 Checkout button handler
+document.getElementById("checkoutBtn").addEventListener("click", function () {
+    if(cart.length === 0){
+        alert("Your cart is empty!");
+        return;
+    }
+
+    alert("Checkout successful! (Demo)");
+    cart = [];
+    localStorage.removeItem("cart");
+    updateCart();
+});
+
 updateCart();
 </script>
 
 </body>
 </html>
+
 
 
